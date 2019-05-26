@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+    <title>Testing websockets</title>
+</head>
+<body>
+    <fieldset>
+        <textarea id="messageWindow" rows="10" cols="50" readonly="true"></textarea>
+        <br/>
+        <input id="inputMessage" type="text"/>
+        <input type="submit" value="send" onclick="send()" />
+        
+        <div id="time"> asdsadasd</div>
+        <div id="test"></div>
+    </fieldset>
+</body>
+    <script type="text/javascript">
+        var textarea = document.getElementById("messageWindow");
+        var webSocket = new WebSocket('ws://localhost/WebsocketTest/websocketendpoint');
+        var inputMessage = document.getElementById('inputMessage');
+    webSocket.onerror = function(event) {
+      onError(event)
+    };
+    webSocket.onopen = function(event) {
+      onOpen(event)
+    };
+    webSocket.onmessage = function(event) {
+      onMessage(event)
+    };
+    function onMessage(event) {
+    	document.getElementById("test").append("<div>"+event.data+"</div>")
+    }
+    function onOpen(event) {
+        textarea.value += "연결 성공\n";
+    }
+    function onError(event) {
+      alert(event.data);
+    }
+    function send() {
+        textarea.value += "나 : " + inputMessage.value + "\n";
+        webSocket.send(inputMessage.value);
+        inputMessage.value = "";
+    }
+
+  
+    var SetTime = 600;		// 최초 설정 시간(기본 : 초)
+	function msg_time() {	// 1초씩 카운트
+		m = Math.floor(SetTime / 60) + "분 "	// 남은 시간 계산
+		var msg = "현재 남은 시간은 <font color='red'>" + m + "</font> 입니다.";
+		document.getElementById("time").innerHTML = msg;	// div 영역에 보여줌 
+		SetTime--;					// 1초씩 감소
+		if (SetTime < 0) {			// 시간이 종료 되었으면..
+			clearInterval(tid);		// 타이머 해제
+			alert("종료");
+		}
+	}
+	function TimerStart(){ tid=setInterval('msg_time()',1000) };
+	TimerStart();
+	
+</script>
+
+
+
+</html>
